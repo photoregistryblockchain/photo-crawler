@@ -45,7 +45,7 @@ puppeteer.launch().then(async browser => {
   const verified = await Promise.all(hashes.map(verifyImage));
   const res = {
     [urls[0]]: verified.reduce((acc, curr, idx) => {
-      acc[sources[0][idx]] = curr;
+      acc[sources[0][idx]] = curr ? 'Registered' : 'Not registered';
       return acc;
     }, {})
   };
