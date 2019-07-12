@@ -9,7 +9,13 @@ const orbsClient = new Client('https://validator.orbs-test.com/vchains/6666', 66
 const getImagesFromPage = async (browser, url) => {
   const page = await browser.newPage();
   await page.goto(url);
-  await page.waitFor(10 * 1000);
+  await page.waitFor(2 * 1000);
+  await page.evaluate(() => window.scrollBy(0, 1000));
+  await page.waitFor(2 * 1000);
+  await page.evaluate(() => window.scrollBy(0, 1000));
+  await page.waitFor(2 * 1000);
+  await page.evaluate(() => window.scrollBy(0, 1000));
+  await page.waitFor(5 * 1000);
   const imageSources = await page.evaluate(() =>
     Array
       .from(document.querySelectorAll('img'), (node) => node.src)
@@ -31,10 +37,10 @@ const verifyImage = async (hash) => {
   return executionResult === 'SUCCESS';
 };
 
-puppeteer.launch({ headless: false }).then(async browser => {
+puppeteer.launch().then(async browser => {
   const sources = await Promise.all(urls.map((url) => getImagesFromPage(browser, url)));
   await browser.close();
-  
+
   const hashes = await Promise.all(sources[0].map(getPHash));
   const verified = await Promise.all(hashes.map(verifyImage));
   const res = {
